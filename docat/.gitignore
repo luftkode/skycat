@@ -8,3 +8,4 @@ db.json
 index.json
 tmp-index.json
 .python-version
+yarn-error.log

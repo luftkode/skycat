@@ -4,7 +4,6 @@ import ReactMarkdown from 'react-markdown'
 // @ts-expect-error ts can't read symbols from a md file
 import gettingStarted from './../assets/getting-started.md'
 
-import UploadButton from '../components/UploadButton'
 import Header from '../components/Header'
 import LoadingPage from './LoadingPage'
 
@@ -61,7 +60,6 @@ export default function Help (): JSX.Element {
       <ReactMarkdown className={styles['markdown-container']}>
         {content}
       </ReactMarkdown>
-      <UploadButton isSingleButton={true} />
     </>
   )
 }

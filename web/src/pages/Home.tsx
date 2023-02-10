@@ -4,9 +4,6 @@ import ProjectRepository from '../repositories/ProjectRepository'
 import { useProjects } from '../data-providers/ProjectDataProvider'
 
 import Help from './Help'
-import UploadButton from '../components/UploadButton'
-import ClaimButton from '../components/ClaimButton'
-import DeleteButton from '../components/DeleteButton'
 import ProjectList from '../components/ProjectList'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
@@ -77,9 +74,6 @@ export default function Home (): JSX.Element {
           onFavoriteChanged={() => updateFavorites()}
         />
       </div>
-      <UploadButton></UploadButton>
-      <ClaimButton></ClaimButton>
-      <DeleteButton></DeleteButton>
       <Footer />
     </div>
   )

@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  docat-dev:
+    build: .
+    working_dir: /app/docat
+    volumes:
+      - type: bind
+        source : "../docat"
+        target : "/app/docat"
+      - type: bind
+        source : "../web"
+        target : "/app/frontend"
+    command: sleep infinity
+    entrypoint: /app/docat/localdev.sh  # start back- & frontend
