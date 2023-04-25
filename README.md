@@ -1,135 +1,29 @@
-![docat](doc/assets/docat-teaser.png)
+# Skydoc
 
-**Host your docs. Simple. Versioned. Fancy.**
+(a fork of docat)
+For version control of Sphinx-generated documentation at SkyTEM.
 
-[![build](https://github.com/docat-org/docat/workflows/docat%20ci/badge.svg)](https://github.com/docat-org/docat/actions)
-[![Gitter](https://badges.gitter.im/docat-docs-hosting/community.svg)](https://gitter.im/docat-docs-hosting/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+## Running Skydoc *production* container
 
-## Getting started
+Until we get an image hosted, you must build and run it locally:
 
-The simplest way is to build and run the docker container,
-you can optionally use volumes to persist state:
+* Go to repo root folder
 
-```sh
-# run container in background and persist data (docs, nginx configs and tokens database as well as the content index)
-# use 'ghcr.io/docat-org/docat:unstable' to get the latest changes
-mkdir -p docat-run/
-docker run \
-  --detach \
-  --volume $PWD/docat-run/doc:/var/docat/ \
-  --publish 8000:80 \
-  ghcr.io/docat-org/docat
+* `docker build . -t skydoc`
+
+* ```
+  docker run \
+    --detach \
+    --volume $PWD/docat-run/doc:/var/docat/ \
+    --publish 8000:80 \
+    skydoc:latest
+  ```
+## Running Skydoc *development* container
+Go to the repo root folder on your host and run the following commands:
+```
+docker compose -f docker/docker-compose.yml build
+docker compose -f docker/docker-compose.yml run docat-dev
 ```
 
-Go to [localhost:8000](http://localhost:8000) to view your docat instance:
-
-![docat screenshot](doc/assets/docat-screenshot.png)
-
-### Local Development
-
-For local development, first configure and start the backend (inside the `docat/` folder):
-
-```sh
-# create a folder for local development (uploading docs)
-DEV_DOCAT_PATH="$(mktemp -d)"
-
-# install dependencies
-poetry install
-
-# run the local development version
-DOCAT_SERVE_FILES=1 DOCAT_STORAGE_PATH="$DEV_DOCAT_PATH" poetry run python -m docat
-```
-
-After this you need to start the frontend (inside the `web/` folder):
-
-```sh
-# install dependencies
-yarn install --frozen-lockfile
-
-# run the web app
-yarn serve
-```
-
-For more advanced options, have a look at the
-[backend](docat/README.md) and [web](web/README.md) docs.
-
-### Push Documentation to docat
-
-The preferred way to push documentation to a docat server is using the [docatl](https://github.com/docat-org/docatl)
-command line application:
-
-```sh
-docatl push --host http://localhost:8000 /path/to/your/docs PROJECT VERSION
-```
-
-There are also docker images available for CI systems.
-
-#### Using Standard UNIX Command Line Tools
-
-If you have static html documentation or use something like
-[mkdocs](https://www.mkdocs.org/), [sphinx](http://www.sphinx-doc.org/en/master/), ...
-to generate your documentation, you can push it to docat:
-
-```sh
-# create a zip of your docs
-zip -r docs.zip /path/to/your-docs
-# upload them to the docat server (replace PROJECT/VERSION with your projectname and the version of the docs)
-curl -X POST -F "file=@docs.zip" http://localhost:8000/api/PROJECT/VERSION
-```
-
-When you have multiple versions you may want to tag some version as **latest**:
-
-```sh
-# tag the version VERSION of project PROJECT as latest
-curl -X PUT http://localhost:8000/api/PROJECT/VERSION/tags/latest
-```
-
-Same thing with `docatl`:
-
-```sh
-# tag the version VERSION of project PROJECT as latest
-docatl tag --host http://localhost:8000 PROJECT VERSION
-```
-
-## Advanced `config.json`
-
-It is possible to configure some things after the fact.
-
-1. Create a `config.json` file
-2. Mount it inside your docker container `--volume /path/to/config.json:/var/www/html/config.json`
-
-Supported config options:
-
-- headerHTML
-
-## Advanced Usage
-
-### Hide Controls
-
-If you would like to send link to a specific version of the documentation without the option to change the version, you can do so by clicking on the `Hide Controls` button. This will hide the control buttons and change the link, which can then be copied as usual.
-
-### Indexing
-
-Docat uses indexing for better search performance. The index is automatically updated when you upload, modify or delete a project. However, this means that if you already have existing projects, these need to be initially indexed. There are two ways to do this:
-
-#### Using an Environment Variable:
-
-When the **DOCAT_INDEX_FILES** is set, docat forces creation of the index on startup. See [local development](#local-development) for examples.
-
-> Note: This will increase startup time substantially, depending on how many projects you have.
-
-#### Using the API:
-
-You can force the index re-creation using the following request:
-
-```sh
-curl -X POST http://localhost:8000/api/index/update
-```
-
-Using `docatl`:
-
-```sh
-docatl update-index --host http://localhost:8000
-```
-
-Don't worry if it takes some time :)
+This will bring up a container in which both back- and frontend are running.
+In the terminal will be the IP and port you can connect to. Conencting to this will give you instant feedback when you are messing around with the frontend files.
